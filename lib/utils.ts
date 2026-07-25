@@ -10,4 +10,5 @@ export interface State {
 
 export const define = createDefine<State>();
 
+// Combine class names using clsx and twMerge
 export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
