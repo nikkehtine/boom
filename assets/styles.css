@@ -1,0 +1,7 @@
+@import "tailwindcss";
+@plugin "daisyui";
+@import "@fontsource-variable/open-sans";
+
+@theme {
+    --font-sans: "Open Sans Variable", sans-serif;
+}
