@@ -9,15 +9,16 @@ const sessionMiddleware = define.handlers(async (ctx) => {
   ctx.state.sessionId = sessionId;
   ctx.state.user = sessionId ? await getSessionUser(sessionId) : null;
 
-  ctx.state.user
-    ? console.log(`session ${ctx.state.sessionId} by ${ctx.state.user.id}`)
-    : console.log(`no session`);
-
   return await ctx.next();
 });
 
 const simpleLoggingMiddleware = define.middleware(async (ctx) => {
   console.log(`${ctx.req.method} ${ctx.req.url}`);
+  if (ctx.state.sessionId && ctx.state.user) {
+    console.log(
+      `  session ${ctx.state.sessionId} by user id ${ctx.state.user.id}`,
+    );
+  }
   return await ctx.next();
 });
 
