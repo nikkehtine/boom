@@ -6,8 +6,6 @@ import Counter from "@/islands/Counter.tsx";
 export default define.page(function Home(ctx) {
   const count = useSignal(3);
 
-  console.log("Shared value " + ctx.state.shared);
-
   return (
     <main class="px-4 py-8 mx-auto min-h-screen font-sans">
       <Head>
@@ -21,6 +19,7 @@ export default define.page(function Home(ctx) {
           height="128"
           alt="the Fresh logo: a sliced lemon dripping with juice"
         />
+        {ctx.state.sessionId && <p>{ctx.state.sessionId}</p>}
         <Counter count={count} />
       </div>
     </main>
