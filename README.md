@@ -45,6 +45,7 @@ docker exec -i boom-pg psql -U postgres -d boomdb < schema.sql
     - [Environment variables](https://docs.deno.com/runtime/reference/env_variables/)
     - [Deno in GitHub Actions](https://docs.deno.com/examples/deno_github_actions_tutorial/)
 - [Postgres docs](https://www.postgresql.org/docs/16)
+- [Setting up Postgres in Docker](https://dev.to/nhannguyenuri/setting-up-postgresql-in-docker-a-step-by-step-guide-3gc4)
 - [pg docs](https://node-postgres.com/apis/pool)
 - [HTTP status codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status)
 - [argon2 on jsr](https://jsr.io/@felix/argon2)
