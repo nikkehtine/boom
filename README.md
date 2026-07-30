@@ -1,8 +1,8 @@
 # Boom
 
-Boom is an online bookmarks manager. The primary goal of the project is
-learning more about and polishing up my skills in full-stack web development,
-Deno, SQL, Postgres, auth, and Docker.
+[Boom](https://www.youtube.com/watch?v=bE2r7r7VVic) is an online bookmarks manager.
+The primary goal of the project is learning more about and polishing up my skills
+in full-stack web development, Deno, SQL, Postgres, auth, and Docker.
 
 ## Usage
 
