@@ -3,7 +3,7 @@ import { define } from "@/lib/utils.ts";
 import { isUniqueViolation, pool } from "@/lib/db.ts";
 
 export const handler = define.handlers({
-  async POST(ctx) {
+  POST: async (ctx) => {
     const { email, password } = await ctx.req.json();
 
     if (!email || !password) {
