@@ -1,6 +1,6 @@
 import { hash, Variant } from "@felix/argon2";
 import { define } from "@/lib/utils.ts";
-import { pool } from "@/lib/db.ts";
+import { isUniqueViolation, pool } from "@/lib/db.ts";
 
 export const handler = define.handlers({
   async POST(ctx) {
@@ -42,7 +42,8 @@ export const handler = define.handlers({
       );
     } catch (err) {
       // Postgres error code 23505 = unique_violation
-      if (err.code === "23505") {
+      if (isUniqueViolation(err)) {
+        console.log(err.code);
         return Response.json(
           { error: "Email is already registered" },
           { status: 409 },
@@ -50,7 +51,10 @@ export const handler = define.handlers({
       }
 
       console.error(err);
-      return Response.json({ error: "Internal server error" }, { status: 500 });
+      return Response.json(
+        { error: "Internal server error" },
+        { status: 500 },
+      );
     }
   },
 });
