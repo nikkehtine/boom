@@ -46,7 +46,7 @@ psql -U postgres -d boomdb_dev -f "sql/schema.sql"
 
 ## Testing
 
-You can test the API using `curl`
+You can test the API using `curl`. Below are a few commands and expected output.
 
 ```sh
 curl localhost:5173/api/health
