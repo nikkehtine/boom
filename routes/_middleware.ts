@@ -16,7 +16,7 @@ const simpleLoggingMiddleware = define.middleware(async (ctx) => {
   console.log(`${ctx.req.method} ${ctx.req.url}`);
   if (ctx.state.sessionId && ctx.state.user) {
     console.log(
-      `  session ${ctx.state.sessionId} by user id ${ctx.state.user.id}`,
+      ` => session ${ctx.state.sessionId} by user id ${ctx.state.user.id}`,
     );
   }
   return await ctx.next();

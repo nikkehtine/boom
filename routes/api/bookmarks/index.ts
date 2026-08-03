@@ -1,3 +1,4 @@
+import { STATUS_CODE } from "@std/http/status";
 import { define } from "@/lib/utils.ts";
 import { isUniqueViolation, withUserContext } from "@/lib/db.ts";
 
@@ -24,7 +25,7 @@ export const handler = define.handlers({
     if (!url || !title) {
       return Response.json(
         { error: "URL and title are required" },
-        { status: 400 },
+        { status: STATUS_CODE.BadRequest },
       );
     }
 
@@ -40,19 +41,19 @@ export const handler = define.handlers({
       });
       return Response.json(
         { bookmark },
-        { status: 201 },
+        { status: STATUS_CODE.Created },
       );
     } catch (err) {
       if (isUniqueViolation(err)) {
         return Response.json(
           { error: "You've already saved this URL" },
-          { status: 409 },
+          { status: STATUS_CODE.Conflict },
         );
       }
       console.error(err);
       return Response.json(
         { error: "Internal server error" },
-        { status: 500 },
+        { status: STATUS_CODE.InternalServerError },
       );
     }
   },
