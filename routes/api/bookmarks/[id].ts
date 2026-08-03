@@ -1,11 +1,33 @@
+import { STATUS_CODE } from "@std/http/status";
 import { define } from "@/lib/utils.ts";
 import { withUserContext } from "@/lib/db.ts";
-import { STATUS_CODE } from "@std/http/status";
+import { BookmarkData } from "@/routes/api/bookmarks/index.ts";
+import { ResponseInvalidJson, ZodErrorResponse } from "@/routes/api/_utils.ts";
+
+const optionalBookmarkData = BookmarkData.partial();
+
+const parseBookmarkId = (id: unknown): number | undefined => {
+  const parsed = Number(id);
+  if (Number.isNaN(parsed) || !Number.isInteger(parsed)) {
+    return;
+  }
+  return parsed;
+};
+
+const invalidIdResponse = () =>
+  Response.json(
+    { error: "Invalid ID" },
+    { status: STATUS_CODE.BadRequest },
+  );
 
 export const handler = define.handlers({
   GET: async (ctx) => {
     const userId = ctx.state.user!.id;
-    const bookmarkId = Number(ctx.params.id);
+    const bookmarkId = parseBookmarkId(ctx.params.id);
+
+    if (!bookmarkId) {
+      return invalidIdResponse();
+    }
 
     const bookmark = await withUserContext(userId, async (client) => {
       const result = await client.query(
@@ -30,8 +52,24 @@ export const handler = define.handlers({
 
   PATCH: async (ctx) => {
     const userId = ctx.state.user!.id;
-    const bookmarkId = Number(ctx.params.id);
-    const { url, title, notes } = await ctx.req.json();
+    const bookmarkId = parseBookmarkId(ctx.params.id);
+
+    if (!bookmarkId) {
+      return invalidIdResponse();
+    }
+
+    let body;
+    try {
+      body = await ctx.req.json();
+    } catch {
+      return ResponseInvalidJson();
+    }
+
+    const result = optionalBookmarkData.safeParse(body);
+    if (!result.success) {
+      return ZodErrorResponse(result.error);
+    }
+    const { url, title, notes } = result.data;
 
     const bookmark = await withUserContext(userId, async (client) => {
       const result = await client.query(
@@ -60,7 +98,11 @@ export const handler = define.handlers({
 
   DELETE: async (ctx) => {
     const userId = ctx.state.user!.id;
-    const bookmarkId = Number(ctx.params.id);
+    const bookmarkId = parseBookmarkId(ctx.params.id);
+
+    if (!bookmarkId) {
+      return invalidIdResponse();
+    }
 
     const deleted = await withUserContext(userId, async (client) => {
       const result = await client.query(

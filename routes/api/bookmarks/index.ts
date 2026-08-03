@@ -1,6 +1,21 @@
 import { STATUS_CODE } from "@std/http/status";
+import { z } from "@zod/zod";
 import { define } from "@/lib/utils.ts";
 import { isUniqueViolation, withUserContext } from "@/lib/db.ts";
+import { ResponseInvalidJson, ZodErrorResponse } from "@/routes/api/_utils.ts";
+
+export const BookmarkData = z.object({
+  url: z.url({
+    error: (iss) => iss.input === undefined ? "URL is required" : "Invalid URL",
+  }),
+  title: z.string({
+    error: (iss) =>
+      iss.input === undefined ? "Title is required" : "Invalid title field",
+  })
+    .min(1, "Title is required")
+    .max(80, "Title must be up to 80 characters long"),
+  notes: z.string().optional(),
+});
 
 export const handler = define.handlers({
   GET: async (ctx) => {
@@ -20,14 +35,18 @@ export const handler = define.handlers({
 
   POST: async (ctx) => {
     const userId = ctx.state.user!.id;
-    const { url, title, notes } = await ctx.req.json();
-
-    if (!url || !title) {
-      return Response.json(
-        { error: "URL and title are required" },
-        { status: STATUS_CODE.BadRequest },
-      );
+    let body;
+    try {
+      body = await ctx.req.json();
+    } catch {
+      return ResponseInvalidJson();
     }
+
+    const result = BookmarkData.safeParse(body);
+    if (!result.success) {
+      return ZodErrorResponse(result.error);
+    }
+    const { url, title, notes } = result.data;
 
     try {
       const bookmark = await withUserContext(userId, async (client) => {
