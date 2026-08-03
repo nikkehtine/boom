@@ -1,31 +1,40 @@
+import { setCookie, STATUS_CODE } from "@std/http";
 import { verify } from "@felix/argon2";
-import { setCookie } from "@std/http";
 import { define } from "@/lib/utils.ts";
 import { pool } from "@/lib/db.ts";
 import { createSession, SESSION_DURATION_MS } from "@/lib/session.ts";
+import {
+  LoginData,
+  ResponseInvalidJson,
+  ZodErrorResponse,
+} from "@/routes/api/_utils.ts";
 
 export const handler = define.handlers({
   POST: async (ctx) => {
-    const { email, password } = await ctx.req.json();
-
-    if (!email || !password) {
-      return Response.json(
-        { error: "Both email and password are required" },
-        { status: 400 },
-      );
+    let body;
+    try {
+      body = await ctx.req.json();
+    } catch {
+      return ResponseInvalidJson();
     }
 
-    const result = await pool.query(
+    const result = LoginData.safeParse(body);
+    if (!result.success) {
+      return ZodErrorResponse(result.error);
+    }
+    const { email, password } = result.data;
+
+    const queryResult = await pool.query(
       `SELECT id, email, password_hash
        FROM users
        WHERE email = $1`,
       [email],
     );
-    const user = result.rows[0];
+    const user = queryResult.rows[0];
 
     const invalidCredentials = Response.json(
       { error: "Invalid email or password" },
-      { status: 401 },
+      { status: STATUS_CODE.Unauthorized },
     );
 
     if (!user) return invalidCredentials;
@@ -36,7 +45,7 @@ export const handler = define.handlers({
 
     const response = Response.json(
       { email: user.email },
-      { status: 200 },
+      { status: STATUS_CODE.OK },
     );
     setCookie(response.headers, {
       name: "session_id",

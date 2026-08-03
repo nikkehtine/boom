@@ -1,5 +1,6 @@
 import { define } from "@/lib/utils.ts";
 import { withUserContext } from "@/lib/db.ts";
+import { STATUS_CODE } from "@std/http/status";
 
 export const handler = define.handlers({
   GET: async (ctx) => {
@@ -18,7 +19,7 @@ export const handler = define.handlers({
     if (!bookmark) {
       return Response.json(
         { error: "Bookmark not found" },
-        { status: 404 },
+        { status: STATUS_CODE.NotFound },
       );
     } else {
       return Response.json(
@@ -48,7 +49,7 @@ export const handler = define.handlers({
     if (!bookmark) {
       return Response.json(
         { error: "Bookmark not found" },
-        { status: 404 },
+        { status: STATUS_CODE.NotFound },
       );
     } else {
       return Response.json(
@@ -73,7 +74,7 @@ export const handler = define.handlers({
     if (!deleted) {
       return Response.json(
         { error: "Bookmark not found" },
-        { status: 404 },
+        { status: STATUS_CODE.NotFound },
       );
     } else {
       return Response.json(

@@ -1,8 +1,20 @@
 # Boom
 
-[Boom](https://www.youtube.com/watch?v=bE2r7r7VVic) is an online bookmarks manager.
-The primary goal of the project is learning more about and polishing up my skills
-in full-stack web development, Deno, SQL, Postgres, auth, and Docker.
+[Boom](https://www.youtube.com/watch?v=bE2r7r7VVic) is an online bookmarks
+manager. The primary goal of the project is learning more about and polishing up
+my skills in full-stack web development.
+
+## Technologies
+
+- Deno
+- Fresh
+- TypeScript
+- PostgreSQL
+- pg (ORM-less raw SQL)
+- Zod
+- Docker
+- Tailwind
+- DaisyUI
 
 ## Usage
 
@@ -18,10 +30,16 @@ deno task dev
 
 This will watch the project directory and restart as necessary.
 
-Next, you want to boot up the Postgres database with Docker:
+Next, you want to boot up the Postgres database with Docker (recommended):
 
 ```sh
 docker-compose up -d
+```
+
+or without:
+
+```sh
+createdb -U postgres -d boomdb_dev
 ```
 
 Verify that it's up:
@@ -42,7 +60,8 @@ docker exec -i boom-pg psql -U postgres -d boomdb_dev < sql/schema.sql
 psql -U postgres -d boomdb_dev -f "sql/schema.sql"
 ```
 
-**NOTE:** in `sql/create_app_role.sql` on line 2 the db is called `boomdb`, check and modify if needed.
+**NOTE:** in `sql/create_app_role.sql` on line 2 the db is called `boomdb`,
+check and modify if needed.
 
 ## Testing
 
